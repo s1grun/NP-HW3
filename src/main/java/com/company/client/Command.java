@@ -1,7 +1,7 @@
-package main.java.com.company.client;
+package com.company.client;
 
 
-import main.java.com.company.common.FileServer;
+import com.company.common.FileServer;
 
 import java.util.Scanner;
 

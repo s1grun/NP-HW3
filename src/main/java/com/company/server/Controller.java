@@ -1,8 +1,8 @@
-package main.java.com.company.server;
+package com.company.server;
 
-import main.java.com.company.common.*;
-import main.java.com.company.server.integration.fileDAO;
+import com.company.common.*;
 //import com.company.server.integration.fileDAO;
+import com.company.server.integration.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
