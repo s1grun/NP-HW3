@@ -1,9 +1,4 @@
 package main.java.com.company.client;
-
-
-
-import main.java.com.company.common.FileServer;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -14,7 +9,7 @@ import java.rmi.RemoteException;
  */
 public class Client {
 
-    FileServer server;
+    main.java.com.company.common.FileServer server;
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
         // write your code here
@@ -24,7 +19,7 @@ public class Client {
     }
 
     public Client() throws RemoteException, NotBoundException, MalformedURLException {
-        server = (FileServer) Naming.lookup("fileServer");
+        server = (main.java.com.company.common.FileServer) Naming.lookup("fileServer");
         System.out.println("get connection with fileServer method");
     }
 

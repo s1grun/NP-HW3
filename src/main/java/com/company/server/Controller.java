@@ -1,6 +1,7 @@
 package main.java.com.company.server;
 
 import main.java.com.company.common.*;
+import com.company.server.integration.fileDAO;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -9,8 +10,10 @@ import java.rmi.server.UnicastRemoteObject;
  * Created by weng on 2019/11/25.
  */
 public class Controller extends UnicastRemoteObject implements FileServer {
-
+    private final fileDAO filesDb;
     protected Controller() throws RemoteException {
+        super();
+        filesDb = new fileDAO();
     }
 
     @Override

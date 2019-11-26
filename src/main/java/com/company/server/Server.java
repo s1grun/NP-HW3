@@ -1,4 +1,4 @@
-package main.java.com.company.server;
+package  main.java.com.company.server;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -36,7 +36,7 @@ public class Server {
         } catch (RemoteException noRegistryRunning) {
             LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
         }
-        Controller controller = new Controller();
+        main.java.com.company.server.Controller controller = new main.java.com.company.server.Controller();
         Naming.rebind("fileServer", controller);
 
     }

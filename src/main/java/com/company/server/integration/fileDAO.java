@@ -1,6 +1,11 @@
 package main.java.com.company.server.integration;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 public class fileDAO {
 //    private static final String TABLE_NAME = "CATALOG";
@@ -12,8 +17,9 @@ public class fileDAO {
 //    private PreparedStatement downloadFileStmt;
 //    private PreparedStatement showAllFilesStmt;
     private final EntityManagerFactory EMfactory;
+    private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
 
-    public fileDAO(EntityManagerFactory eMfactory) {
-        EMfactory = eMfactory;
+    public fileDAO() {
+        EMfactory = Persistence.createEntityManagerFactory("files");
     }
 }
