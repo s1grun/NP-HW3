@@ -1,5 +1,6 @@
-package com.company.server;
+package main.java.com.company.server;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -17,6 +18,8 @@ public class Server {
             server.startServer();
         } catch (RemoteException e) {
             System.out.println("failed to create RMI server");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -27,14 +30,14 @@ public class Server {
     }
 
 
-    void startServer() throws RemoteException {
+    void startServer() throws RemoteException, MalformedURLException {
         try {
             LocateRegistry.getRegistry().list();
         } catch (RemoteException noRegistryRunning) {
             LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
         }
-//        Controller controller = new Controller();
-//        Naming.rebind("catalog", controller);
+        Controller controller = new Controller();
+        Naming.rebind("fileServer", controller);
 
     }
 

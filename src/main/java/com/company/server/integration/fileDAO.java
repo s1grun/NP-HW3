@@ -1,4 +1,4 @@
-package com.company.server.integration;
+package main.java.com.company.server.integration;
 
 import javax.persistence.EntityManagerFactory;
 

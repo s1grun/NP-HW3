@@ -1,4 +1,7 @@
-package com.company.client;
+package main.java.com.company.client;
+
+
+import main.java.com.company.common.FileServer;
 
 import java.util.Scanner;
 
@@ -7,6 +10,10 @@ import java.util.Scanner;
  */
 public class Command implements Runnable{
     private Scanner console = new Scanner(System.in);
+    private FileServer server ;
+    public Command(FileServer server){
+        this.server = server;
+    }
 
 
     @Override
@@ -28,7 +35,7 @@ public class Command implements Runnable{
 
                         break;
                     case "start":
-
+                        server.userLogin("qingtao","123");
                         break;
                     default:
                         System.out.println("Unknown command");

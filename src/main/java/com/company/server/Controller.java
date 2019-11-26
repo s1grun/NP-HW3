@@ -1,6 +1,6 @@
-package com.company.server;
+package main.java.com.company.server;
 
-import com.company.common.FileServer;
+import main.java.com.company.common.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,7 +15,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
     @Override
     public void userLogin(String userName, String pw) throws RemoteException {
-
+        System.out.println(userName+pw);
     }
 
     @Override
