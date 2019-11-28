@@ -10,7 +10,6 @@ import java.rmi.registry.Registry;
  * Created by weng on 2019/11/25.
  */
 public class Server {
-
     public static void main(String[] args) {
         // write your code here
         Server server = new Server();

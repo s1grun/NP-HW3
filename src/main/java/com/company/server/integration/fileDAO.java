@@ -2,24 +2,40 @@ package com.company.server.integration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.io.File;
 
 public class fileDAO {
-//    private static final String TABLE_NAME = "CATALOG";
-//    private static final String FILE_NAME_COLUMN_NAME = "FILE-NAME";
-//    private static final String SIZE_COLUMN_NAME = "SIZE";
-//    private static final String OWNER_COLUMN_NAME = "OWNER";
-//
-//    private PreparedStatement uploadFileStmt;
-//    private PreparedStatement downloadFileStmt;
-//    private PreparedStatement showAllFilesStmt;
-    private final EntityManagerFactory EMfactory;
+    private final EntityManagerFactory fact;
     private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
 
     public fileDAO() {
-        EMfactory = Persistence.createEntityManagerFactory("files");
+        fact = Persistence.createEntityManagerFactory("filesPersistenceUnit");
+    }
+
+    public File findFile (String fileName, boolean endOfTransaction) {
+        if (fileName == null) {
+            return null;
+        }
+
+        try{
+            EntityManager entityManager = beginTransaction();
+            try {
+                return entityManager.createNamedQuery("findFile", File.class).
+                        setParameter("fileName", fileName).getSingleResult();
+            }
+        }
+
+    }
+
+    private EntityManager beginTransaction() {
+        EntityManager entityManager = fact.createEntityManager();
+        entityManagerThreadLocal.set(entityManager);
+        EntityTransaction transaction = entityManager.getTransaction();
+        if (!transaction.isActive()) {
+            transaction.begin();
+        }
+        return entityManager;
     }
 }
