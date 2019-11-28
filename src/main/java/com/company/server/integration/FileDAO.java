@@ -4,6 +4,8 @@ import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileDAO {
     private final EntityManagerFactory fact;
@@ -24,23 +26,25 @@ public class FileDAO {
     }
 
     public FilesEntity findFile (String fileName, boolean endOfTransaction) {
+        FilesEntity find;
         if (fileName == null) {
-            return null;
+            find= null;
         }
 
         try{
             EntityManager entityManager = beginTransaction();
             try {
-                return entityManager.createNamedQuery("findFile", FilesEntity.class).
+                find= entityManager.createNamedQuery("findFile", FilesEntity.class).
                         setParameter("fileName", fileName).getSingleResult();
             }catch (NoResultException noFileWithThisName) {
-                return null;
+                find= null;
             }
         }finally {
             if (endOfTransaction){
-
+                commitTransaction();
             }
         }
+        return find;
 
     }
 
@@ -57,5 +61,27 @@ public class FileDAO {
     private void commitTransaction() {
         entityManagerThreadLocal.get().getTransaction().commit();
 
+    }
+    public void updateFile(){
+        commitTransaction();
+    }
+
+    public List<FilesEntity> getAllFile() {
+        List<FilesEntity> arr;
+        try {
+            EntityManager em = beginTransaction();
+            try {
+                arr = em.createNamedQuery("getAllFiles", FilesEntity.class).getResultList();
+            } catch (NoResultException noSuchAccount) {
+
+                arr = new ArrayList<>();
+            } catch (Exception e){
+                arr = new ArrayList<>();
+                System.out.println(e);
+            }
+        } finally {
+            commitTransaction();
+        }
+        return arr;
     }
 }
