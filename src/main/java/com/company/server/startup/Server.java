@@ -1,4 +1,6 @@
-package  com.company.server;
+package com.company.server.startup;
+
+import com.company.server.controller.Controller;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
