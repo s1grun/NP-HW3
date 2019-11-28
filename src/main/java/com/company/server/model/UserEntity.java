@@ -16,6 +16,10 @@ import javax.persistence.LockModeType;
                         name = "findUser",
                         query = "SELECT user FROM UserEntity user WHERE user.username LIKE :username"
 //                        lockMode = LockModeType.OPTIMISTIC
+                ),
+                @NamedQuery(
+                        name = "checkPassword",
+                        query = "SELECT pass FROM UserEntity pass WHERE pass.password LIKE :password"
                 )
         }
 )

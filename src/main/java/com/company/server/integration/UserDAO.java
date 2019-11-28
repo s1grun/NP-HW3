@@ -40,6 +40,24 @@ public class UserDAO {
         }
     }
 
+    public UserEntity checkPassword(String password, boolean endTransactionAfterSearching) {
+        if (password == null) {
+            return null;
+        }
+        try {
+            EntityManager entityManager = beginTransaction();
+            try {
+                return entityManager.createNamedQuery("checkPassword", UserEntity.class).setParameter("password", password).getSingleResult();
+            }catch (NoResultException passwordWrong) {
+                return null;
+            }
+        }finally {
+            if (endTransactionAfterSearching){
+                commitTransaction();
+            }
+        }
+    }
+
     private EntityManager beginTransaction() {
         EntityManager entityManager = fact.createEntityManager();
         entityManagerThreadLocal.set(entityManager);

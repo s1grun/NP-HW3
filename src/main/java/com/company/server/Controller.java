@@ -23,13 +23,22 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public void userLogin(String userName, String pw) throws RemoteException {
+    public boolean userLogin(String userName, String pw) throws Exception {
         System.out.println(userName+pw);
+        try {
+            if (userDAO.findUser(userName, true) != null) {
+                if(userDAO.checkPassword(pw, true) != null) {
+                    return true;
+                }
+            }
+        }catch (Exception e) {
+            throw new Exception("login failed" + e);
+        }
+        return false;
     }
 
     @Override
     public boolean register(String userName, String pw) throws Exception {
-        System.out.println(111111111);
         try {
             if (userDAO.findUser(userName, true) != null) {
                 throw new Exception("User: " + userName + " already exists");

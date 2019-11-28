@@ -1,6 +1,7 @@
 package com.company.client;
 
 
+import com.company.client.view.ClientView;
 import com.company.common.FileServer;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class Command implements Runnable{
 
                 switch (cmd_type) {
                     case "disconnect":
-
+                        new ClientView(0);
                         break;
                     case "upload":
                         String cmd_text = cmd.split(" ")[1];
@@ -46,13 +47,23 @@ public class Command implements Runnable{
                         if (status == 200){
                             ClientFileHandler handler = new ClientFileHandler();
                             handler.uploadSocket(cmd_text);
+                            new ClientView(200);
                         }
 
                         break;
                     case "register":
                         boolean res = server.register("qingtao","123");
                         if(res){
-                            System.out.println("create successfully");
+                            new ClientView(110);
+                        }else {
+                            new ClientView(500);
+                        }
+                    case "login":
+                        boolean log = server.userLogin("qingtao","123");
+                        if (log){
+                            new ClientView(210);
+                        }else {
+                            new ClientView(440);
                         }
                         break;
                     default:
