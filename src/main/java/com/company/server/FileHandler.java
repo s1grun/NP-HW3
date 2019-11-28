@@ -13,6 +13,7 @@ public class FileHandler implements Runnable{
     private int model; //1 for upload, 2 for download;
     ServerSocket server = null;
     private String fname;
+    boolean status =true;
     public FileHandler(int model) {
         this.model = model;
     }
@@ -24,7 +25,8 @@ public class FileHandler implements Runnable{
     public void receiveFile() throws IOException {
         try {
             server= new ServerSocket(portForFile);
-            while (true){
+            while (status){
+
                 Socket socket = server.accept();
                 System.out.println("log: client connected.");
                 DataInputStream in_stream = new DataInputStream(socket.getInputStream());
@@ -38,6 +40,7 @@ public class FileHandler implements Runnable{
                 while((length=in_stream.read(b))!=-1){
                     fileOut.write(b, 0, length);
                 }
+                status =false;
                 fileOut.flush();
                 fileOut.close();
                 in_stream.close();
@@ -46,11 +49,13 @@ public class FileHandler implements Runnable{
                 Thread.currentThread().stop();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             if(server!=null){
                 server.close();
             }
             Thread.currentThread().stop();
+        } catch (Exception e){
+            System.out.println(e);
         }
     }
 
@@ -58,7 +63,7 @@ public class FileHandler implements Runnable{
 
 
     public void downloadFile(String path){
-        boolean status =true;
+//        boolean status =true;
         try {
             server= new ServerSocket(portForFile);
 
@@ -90,10 +95,23 @@ public class FileHandler implements Runnable{
 
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Thread.currentThread().stop();
         }
+    }
+
+    public void stop_thread(){
+        System.out.println("stop server");
+        status =false;
+
+        try {
+            server.close();
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
     @Override

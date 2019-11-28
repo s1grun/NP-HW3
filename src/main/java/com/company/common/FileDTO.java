@@ -7,4 +7,5 @@ import java.io.Serializable;
 
 public interface FileDTO extends Serializable {
     public String getOwner();
+    public String getName();
 }

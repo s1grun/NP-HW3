@@ -1,5 +1,7 @@
 package com.company.server.model;
 
+import com.company.common.UserDTO;
+
 import javax.persistence.*;
 import java.util.Objects;
 import javax.persistence.GeneratedValue;
@@ -25,8 +27,8 @@ import javax.persistence.LockModeType;
 )
 
 @Entity
-@Table(name = "user", schema = "files")
-public class UserEntity {
+@Table(name = "user", schema = "filesys")
+public class UserEntity implements UserDTO {
     private String username;
     private String password;
     private int uid;
@@ -44,6 +46,7 @@ public class UserEntity {
     public String getUsername() {
         return username;
     }
+
 
     public void setUsername(String username) {
         this.username = username;

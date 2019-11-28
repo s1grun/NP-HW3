@@ -1,5 +1,7 @@
 package com.company.server.model;
 
+import com.company.common.FileDTO;
+
 import javax.persistence.*;
 import java.util.Objects;
 import javax.persistence.GeneratedValue;
@@ -9,22 +11,26 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@NamedQueries({
-        @NamedQuery(
-                name = "findAccountByName",
-                query = "SELECT fm FROM FilesEntity fm WHERE fm.name LIKE :name"
-//                lockMode = LockModeType.OPTIMISTIC
-        )
-}
-)
+//@NamedQueries({
+//        @NamedQuery(
+//                name = "findAccountByName",
+//                query = "SELECT fm FROM FilesEntity fm WHERE fm.name LIKE :name"
+////                lockMode = LockModeType.OPTIMISTIC
+//        )
+//}
+//)
 
 
 
 @NamedQueries(
-        {
+        {       @NamedQuery(
+                    name = "findFile",
+                    query = "SELECT fm FROM FilesEntity fm WHERE fm.name LIKE :fileName"
+    //                lockMode = LockModeType.OPTIMISTIC
+                ),
                 @NamedQuery(
                         name = "getAllFiles",
-                        query = "SELECT files FROM FilesEntity files"
+                        query = "SELECT allfiles FROM FilesEntity allfiles"
 //                        lockMode = LockModeType.OPTIMISTIC
                 )
         }
@@ -35,17 +41,19 @@ import javax.persistence.Id;
 
 
 @Entity
-@Table(name = "files", schema = "files")
-public class FilesEntity {
+@Table(name = "files", schema = "filesys")
+public class FilesEntity implements FileDTO{
     private String name;
     private String owner;
     private long size;
     private int idFile;
+    private int permission;
 
-    public FilesEntity(String name, String owner, long size) {
+    public FilesEntity(String name, String owner, long size, int permission) {
         this.name = name;
         this.owner = owner;
         this.size = size;
+        this.permission = permission;
     }
 
     public FilesEntity(){
@@ -80,6 +88,16 @@ public class FilesEntity {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    @Basic
+    @Column(name = "permission")
+    public int getPermission() {
+        return permission;
+    }
+
+    public void setPermission(int permission) {
+        this.permission = permission;
     }
 
     @Id

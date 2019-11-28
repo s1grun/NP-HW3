@@ -9,6 +9,7 @@ import com.company.server.model.UserEntity;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
@@ -56,18 +57,60 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
 
     @Override
-    public int uploadFile(String name, String owner, long size) throws Exception {
-        FileHandler handler = new FileHandler(1);
-        ForkJoinPool.commonPool().execute(handler);
+    public CommunicateStatus uploadFile(String name, String owner, long size, int permission) throws Exception {
+        FileHandler handler =null;
+        try{
+            handler = new FileHandler(1);
+            ForkJoinPool.commonPool().execute(handler);
+        }catch (Exception e){
+            System.out.println("server close "+e);
+        }
 
         try {
-//            if (filesDAO.findFile(name, true) != null) {
-//                throw new Exception("File with this name: " + name + "already exists");
-//            }
-            filesDAO.addFile(new FilesEntity(name, owner, size));
-            return 200;
+            FilesEntity the_file = filesDAO.findFile(name, false);
+            if (the_file != null) {
+//                System.out.println(the_file);
+                if(the_file.getOwner() == owner){
+//                    filesDAO.addFile(new FilesEntity(name, owner, size,permission));
+                    the_file.setOwner(owner);
+                    the_file.setPermission(permission);
+                    the_file.setSize(size);
+                    filesDAO.updateFile();
+                    System.out.println("File with this name: " + name + "already exists, but we will update");
+                    return CommunicateStatus.CONNECTION_BUILD;
+                }else{
+                    if(the_file.getPermission() == 1){
+                        System.out.println("no permission");
+                        try{
+                            handler.stop_thread();
+                        }catch (Exception e){
+                            System.out.println("close server "+e);
+                        }
+
+                        throw new Exception("File with this name: " + name + " already exists, no permission to update");
+                    }
+                    the_file.setOwner(owner);
+                    the_file.setPermission(permission);
+                    the_file.setSize(size);
+                    filesDAO.updateFile();
+//                    filesDAO.addFile(new FilesEntity(name, owner, size,permission));
+                    return CommunicateStatus.CONNECTION_BUILD;
+                }
+
+            }else{
+                filesDAO.updateFile();
+                filesDAO.addFile(new FilesEntity(name, owner, size,permission));
+                return CommunicateStatus.CONNECTION_BUILD;
+            }
+
         } catch (Exception e) {
-            throw new Exception("Failed to create file in db" + e);
+            System.out.println(e);
+            try{
+                handler.stop_thread();
+            }catch (Exception e2){
+                System.out.println("close server "+e2);
+            }
+            throw new Exception("Failed to create file in db " + e);
         }
 
 //        return 200;
@@ -82,7 +125,13 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public List<FilesEntity> getFileList() {
-        return userDAO.getFileList();
+    public List<? extends FileDTO> getFileList() {
+        try{
+            return filesDAO.getAllFile();
+        }catch (Exception e) {
+            System.out.println("get file list failed:"+ e);
+        }
+        return new ArrayList<>();
+
     }
 }

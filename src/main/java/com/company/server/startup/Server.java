@@ -18,7 +18,8 @@ public class Server {
         try {
             server.startServer();
         } catch (RemoteException e) {
-            System.out.println("failed to create RMI server");
+            System.out.println("failed to create RMI server "+e);
+            e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

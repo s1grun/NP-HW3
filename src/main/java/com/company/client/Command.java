@@ -2,11 +2,16 @@ package com.company.client;
 
 
 import com.company.client.view.ClientView;
+import com.company.common.CommunicateStatus;
+import com.company.common.FileDTO;
 import com.company.common.FileServer;
 import com.company.common.UserDTO;
 
 
 import java.io.File;
+import java.rmi.ServerError;
+import java.rmi.ServerException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -16,6 +21,8 @@ public class Command implements Runnable{
     private Scanner console = new Scanner(System.in);
     private FileServer server ;
     private UserDTO user = null;
+    final int READ_ONLY=1;
+    final int WRITE=0;
     public Command(FileServer server){
         this.server = server;
     }
@@ -31,38 +38,60 @@ public class Command implements Runnable{
                 String cmd_type = cmd.split(" ")[0];
 
                 switch (cmd_type) {
-                    case "disconnect":
+                    case "logout":
+                        user = null;
                         new ClientView(0);
                         break;
                     case "upload":
-                        String filename = cmd.split(" ")[1];
-                        File file;
-                        try{
+                        if(user!=null){
+                            String filename = cmd.split(" ")[1];
+                            int permission = WRITE;
+                            try{
+                                permission=Integer.getInteger(cmd.split(" ")[2]) ;
+                            }catch (Exception e){
+                                System.out.println("permission default WRITE");
+                            }
+
+                            File file;
+
                             file = new File(filename);
-                        }catch (Exception e){
-                            System.out.println("file error");
-                            System.out.println(e);
-                            break;
+                            if(!file.exists()){
+                                System.out.println("file error");
+                                break;
+                            }
+
+                            try{
+                                CommunicateStatus status = server.uploadFile(filename, user.getUsername(), file.length(),permission);
+                                System.out.println(status);
+                                if (status == CommunicateStatus.CONNECTION_BUILD){
+                                    ClientFileHandler handler = new ClientFileHandler();
+                                    handler.uploadSocket(filename);
+                                    new ClientView(200);
+                                }
+                            }catch (Exception e){
+                                System.out.println(e);
+                            }
+
+
+                        }else {
+                            new ClientView(441);
                         }
 
-                        int status = server.uploadFile(filename, "qingtao", file.length());
-                        System.out.println(status);
-
-                        if (status == 200){
-                            ClientFileHandler handler = new ClientFileHandler();
-                            handler.uploadSocket(filename);
-                            new ClientView(200);
-                        }
 
                         break;
 
                     case "download":
-                        String fname = cmd.split(" ")[1];
-                        if(server.downloadFile(fname)==200){
-                            ClientFileHandler handler = new ClientFileHandler();
-                            handler.downloadFile();
-                            System.out.println("download successfully");
+                        if(user!=null){
+                            String fname = cmd.split(" ")[1];
+                            if(server.downloadFile(fname)==200){
+                                ClientFileHandler handler = new ClientFileHandler();
+                                handler.downloadFile();
+                                System.out.println("download successfully");
+                            }
+                        }else{
+                            new ClientView(441);
                         }
+
                         break;
                     case "register":
                         boolean res = server.register("qingtao","123");
@@ -71,6 +100,7 @@ public class Command implements Runnable{
                         }else {
                             new ClientView(500);
                         }
+                        break;
                     case "login":
                         user = server.userLogin("qingtao","123");
                         if (user!= null){
@@ -81,11 +111,14 @@ public class Command implements Runnable{
                         break;
                     case "fileList":
                         if(user!=null){
-                            server.getFileList();
+                            List<? extends FileDTO> file_list = server.getFileList();
+                            for(FileDTO files:file_list){
+                                System.out.println(files.getName()+" upload by: "+ files.getOwner());
+                            }
                         }else{
                             new ClientView(441);
                         }
-
+                        break;
                     default:
                         System.out.println("Unknown command");
                         break;

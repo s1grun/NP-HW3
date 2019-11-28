@@ -26,39 +26,43 @@ public class UserDAO{
 //    }
 
     public UserEntity findUser(String userName, boolean endTransactionAfterSearching){
+        UserEntity user;
         if (userName == null){
-            return null;
+            user= null;
         }
         try {
             EntityManager entityManager = beginTransaction();
             try {
-                return (UserEntity) entityManager.createNamedQuery("findUser", UserEntity.class).setParameter("username", userName).getSingleResult();
+                user= (UserEntity) entityManager.createNamedQuery("findUser", UserEntity.class).setParameter("username", userName).getSingleResult();
             } catch (NoResultException userNotExist) {
-                return null;
+                user= null;
             }
         } finally {
             if (endTransactionAfterSearching){
                 commitTransaction();
             }
         }
+        return user;
     }
 
     public UserEntity checkPassword(String password, boolean endTransactionAfterSearching) {
+        UserEntity user;
         if (password == null) {
-            return null;
+            user= null;
         }
         try {
             EntityManager entityManager = beginTransaction();
             try {
-                return entityManager.createNamedQuery("checkPassword", UserEntity.class).setParameter("password", password).getSingleResult();
+                user= entityManager.createNamedQuery("checkPassword", UserEntity.class).setParameter("password", password).getSingleResult();
             }catch (NoResultException passwordWrong) {
-                return null;
+                user= null;
             }
         }finally {
             if (endTransactionAfterSearching){
                 commitTransaction();
             }
         }
+        return user;
     }
 
     private EntityManager beginTransaction() {
@@ -86,16 +90,5 @@ public class UserDAO{
     }
 
 
-    public List<FilesEntity> getFileList() {
-        try {
-            EntityManager em = beginTransaction();
-            try {
-                return em.createNamedQuery("getAllFiles", FilesEntity.class).getResultList();
-            } catch (NoResultException noSuchAccount) {
-                return new ArrayList<>();
-            }
-        } finally {
-            commitTransaction();
-        }
-    }
+
 }

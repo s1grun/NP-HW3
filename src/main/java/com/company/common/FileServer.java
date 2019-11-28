@@ -1,7 +1,5 @@
 package com.company.common;
 
-import com.company.server.model.FilesEntity;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -13,8 +11,8 @@ public interface FileServer extends Remote {
 
     public UserDTO userLogin(String userName, String pw) throws Exception;
     public boolean register(String userName, String pw) throws Exception;
-    int uploadFile(String name, String owner, long size) throws Exception;
+    CommunicateStatus uploadFile(String name, String owner, long size, int permission) throws Exception;
     int downloadFile(String name) throws RemoteException;
-    public List<FilesEntity> getFileList();
+    public List<? extends FileDTO> getFileList() throws RemoteException;
 
 }

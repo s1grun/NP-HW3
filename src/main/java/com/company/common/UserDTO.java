@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public interface UserDTO extends Serializable {
     public String getUsername();
-    public int getId();
+    public int getUid();
     public String getPassword();
 
 }
