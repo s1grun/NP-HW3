@@ -32,13 +32,13 @@ public class Command implements Runnable{
                         break;
                     case "upload":
                         String cmd_text = cmd.split(" ")[1];
-                       try{
-                           File f = new File(cmd_text);
-                       }catch (Exception e){
-                           System.out.println("file error");
-                           System.out.println(e);
-                           break;
-                       }
+                        try{
+                            File f = new File(cmd_text);
+                        }catch (Exception e){
+                            System.out.println("file error");
+                            System.out.println(e);
+                            break;
+                        }
 
                         int status = server.uploadFile(cmd_text);
                         System.out.println(status);
@@ -49,6 +49,17 @@ public class Command implements Runnable{
                         }
 
                         break;
+
+                    case "download":
+                        String fname = cmd.split(" ")[1];
+
+
+                        if(server.downloadFile(fname)==200){
+                            ClientFileHandler handler = new ClientFileHandler();
+                            handler.downloadFile();
+                            System.out.println("download successfully");
+                        }
+                        break;
                     case "register":
                         boolean res = server.register("qingtao","123");
                         if(res){
@@ -58,10 +69,9 @@ public class Command implements Runnable{
                     default:
                         System.out.println("Unknown command");
                         break;
-
                 }
             } catch (Exception e) {
-                System.out.println("client read cmd failed "+e);
+                System.out.println(e);
             }
         }
     }

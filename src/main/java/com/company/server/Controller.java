@@ -51,7 +51,9 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public void downloadFile(String name) throws RemoteException {
-
+    public int downloadFile(String name) throws RemoteException {
+        FileHandler handler = new FileHandler(2, name);
+        ForkJoinPool.commonPool().execute(handler);
+        return 200;
     }
 }
