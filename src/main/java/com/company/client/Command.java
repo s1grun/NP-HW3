@@ -3,6 +3,7 @@ package com.company.client;
 
 import com.company.common.FileServer;
 
+import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -29,12 +30,26 @@ public class Command implements Runnable{
                     case "disconnect":
 
                         break;
-                    case "try":
+                    case "upload":
                         String cmd_text = cmd.split(" ")[1];
+                       try{
+                           File f = new File(cmd_text);
+                       }catch (Exception e){
+                           System.out.println("file error");
+                           System.out.println(e);
+                           break;
+                       }
 
+                        int status = server.uploadFile(cmd_text);
+                        System.out.println(status);
+
+                        if (status == 200){
+                            ClientFileHandler handler = new ClientFileHandler();
+                            handler.uploadSocket(cmd_text);
+                        }
 
                         break;
-                    case "start":
+                    case "register":
                         server.userLogin("qingtao","123");
                         break;
                     default:
@@ -43,7 +58,7 @@ public class Command implements Runnable{
 
                 }
             } catch (Exception e) {
-                System.out.println("client read cmd failed");
+                System.out.println("client read cmd failed "+e);
             }
         }
     }

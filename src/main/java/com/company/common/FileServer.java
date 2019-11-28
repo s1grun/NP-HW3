@@ -8,9 +8,10 @@ import java.rmi.RemoteException;
  */
 public interface FileServer extends Remote {
 
-    public void userLogin(String userName, String pw)throws RemoteException;
-    public void register(String userName,String pw)throws RemoteException;
-    void uploadFile(String name) throws RemoteException;
+    void userLogin(String userName, String pw)throws RemoteException;
+    void register(String userName,String pw)throws RemoteException;
+    int uploadFile(String name) throws RemoteException;
     void downloadFile(String name) throws RemoteException;
+
 
 }

@@ -6,6 +6,7 @@ import com.company.server.integration.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Created by weng on 2019/11/25.
@@ -28,7 +29,11 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public void uploadFile(String name) throws RemoteException {
+    public int uploadFile(String name) throws RemoteException {
+        FileHandler handler = new FileHandler(1);
+        ForkJoinPool.commonPool().execute(handler);
+
+        return 200;
 
     }
 
