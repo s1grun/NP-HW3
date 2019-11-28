@@ -2,14 +2,39 @@ package com.company.server.model;
 
 import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@NamedQueries({
+        @NamedQuery(
+                name = "findAccountByName",
+                query = "SELECT fm FROM FilesEntity fm WHERE fm.name LIKE :name"
+//                lockMode = LockModeType.OPTIMISTIC
+        )
+}
+)
 
 @Entity
-@Table(name = "files", schema = "files", catalog = "")
+@Table(name = "files", schema = "files")
 public class FilesEntity {
     private String name;
     private String owner;
-    private String size;
+    private int size;
     private int idFile;
+
+    public FilesEntity(String name, String owner, int size) {
+        this.name = name;
+        this.owner = owner;
+        this.size = size;
+    }
+
+    public FilesEntity(){
+
+    }
 
     @Basic
     @Column(name = "name")
@@ -33,16 +58,17 @@ public class FilesEntity {
 
     @Basic
     @Column(name = "size")
-    public String getSize() {
+    public int getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
     @Id
     @Column(name = "idFile")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public int getIdFile() {
         return idFile;
     }

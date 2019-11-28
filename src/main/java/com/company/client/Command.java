@@ -32,21 +32,21 @@ public class Command implements Runnable{
                         new ClientView(0);
                         break;
                     case "upload":
-                        String cmd_text = cmd.split(" ")[1];
+                        String filename = cmd.split(" ")[1];
                         try{
-                            File f = new File(cmd_text);
+                            File file = new File(filename);
                         }catch (Exception e){
                             System.out.println("file error");
                             System.out.println(e);
                             break;
                         }
 
-                        int status = server.uploadFile(cmd_text);
+                        int status = server.uploadFile(filename, "qingtao", filename.length());
                         System.out.println(status);
 
                         if (status == 200){
                             ClientFileHandler handler = new ClientFileHandler();
-                            handler.uploadSocket(cmd_text);
+                            handler.uploadSocket(filename);
                             new ClientView(200);
                         }
 

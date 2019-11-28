@@ -1,8 +1,10 @@
-package com.company.server;
+package com.company.server.controller;
 
 import com.company.common.*;
 //import com.company.server.integration.fileDAO;
+import com.company.server.FileHandler;
 import com.company.server.integration.*;
+import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
 import java.rmi.RemoteException;
@@ -13,12 +15,12 @@ import java.util.concurrent.ForkJoinPool;
  * Created by weng on 2019/11/25.
  */
 public class Controller extends UnicastRemoteObject implements FileServer {
-//    private final fileDAO filesDb;
+    private final FileDAO filesDAO;
     private final UserDAO userDAO;
 
-    protected Controller() throws RemoteException {
+    public Controller() throws RemoteException {
         super();
-//        filesDb = new fileDAO();
+        filesDAO = new FileDAO();
         userDAO = new UserDAO();
     }
 
@@ -50,12 +52,23 @@ public class Controller extends UnicastRemoteObject implements FileServer {
         }
     }
 
+
     @Override
-    public int uploadFile(String name) throws RemoteException {
+    public int uploadFile(String name, String owner, int size) throws Exception {
         FileHandler handler = new FileHandler(1);
         ForkJoinPool.commonPool().execute(handler);
 
-        return 200;
+        try {
+//            if (filesDAO.findFile(name, true) != null) {
+//                throw new Exception("File with this name: " + name + "already exists");
+//            }
+            filesDAO.addFile(new FilesEntity(name, owner, size));
+            return 200;
+        } catch (Exception e) {
+            throw new Exception("Failed to create file in db" + e);
+        }
+
+//        return 200;
 
     }
 

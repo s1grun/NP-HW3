@@ -10,7 +10,7 @@ public interface FileServer extends Remote {
 
     public boolean userLogin(String userName, String pw) throws Exception;
     public boolean register(String userName, String pw) throws Exception;
-    int uploadFile(String name) throws RemoteException;
+    int uploadFile(String name, String owner, int size) throws Exception;
     int downloadFile(String name) throws RemoteException;
 
 }
