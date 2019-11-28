@@ -50,7 +50,10 @@ public class Command implements Runnable{
 
                         break;
                     case "register":
-                        server.userLogin("qingtao","123");
+                        boolean res = server.register("qingtao","123");
+                        if(res){
+                            System.out.println("create successfully");
+                        }
                         break;
                     default:
                         System.out.println("Unknown command");

@@ -3,6 +3,7 @@ package com.company.server;
 import com.company.common.*;
 //import com.company.server.integration.fileDAO;
 import com.company.server.integration.*;
+import com.company.server.model.UserEntity;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -12,10 +13,13 @@ import java.util.concurrent.ForkJoinPool;
  * Created by weng on 2019/11/25.
  */
 public class Controller extends UnicastRemoteObject implements FileServer {
-    private final fileDAO filesDb;
+//    private final fileDAO filesDb;
+    private final UserDAO userDAO;
+
     protected Controller() throws RemoteException {
         super();
-        filesDb = new fileDAO();
+//        filesDb = new fileDAO();
+        userDAO = new UserDAO();
     }
 
     @Override
@@ -24,8 +28,17 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public void register(String userName, String pw) throws RemoteException {
-
+    public boolean register(String userName, String pw) throws Exception {
+        System.out.println(111111111);
+        try {
+            if (userDAO.findUser(userName, true) != null) {
+                throw new Exception("User: " + userName + " already exists");
+            }
+            userDAO.registerUser( new UserEntity(userName, pw));
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Could not create user: " + userName, e);
+        }
     }
 
     @Override
