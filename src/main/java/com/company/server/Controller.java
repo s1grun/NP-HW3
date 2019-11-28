@@ -3,10 +3,12 @@ package com.company.server;
 import com.company.common.*;
 //import com.company.server.integration.fileDAO;
 import com.company.server.integration.*;
+import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -23,18 +25,19 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public boolean userLogin(String userName, String pw) throws Exception {
+    public UserDTO userLogin(String userName, String pw) throws Exception {
         System.out.println(userName+pw);
         try {
             if (userDAO.findUser(userName, true) != null) {
-                if(userDAO.checkPassword(pw, true) != null) {
-                    return true;
+                UserDTO new_user = (UserDTO) userDAO.checkPassword(pw, true);
+                if( new_user!= null) {
+                    return new_user;
                 }
             }
         }catch (Exception e) {
             throw new Exception("login failed" + e);
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -64,5 +67,10 @@ public class Controller extends UnicastRemoteObject implements FileServer {
         FileHandler handler = new FileHandler(2, name);
         ForkJoinPool.commonPool().execute(handler);
         return 200;
+    }
+
+    @Override
+    public List<FilesEntity> getFileList() {
+        return userDAO.getFileList();
     }
 }

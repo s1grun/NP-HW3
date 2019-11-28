@@ -22,6 +22,9 @@ public class ClientView {
             case 440:
                 System.out.println("Login failed");
                 break;
+            case 441:
+                System.out.println("Please login");
+                break;
 
         }
 

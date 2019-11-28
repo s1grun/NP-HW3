@@ -1,0 +1,3 @@
+# Created by .ignore support plugin (hsz.mobi)
+src/main/resources/META-INF/persistence.xml
+src/main/java/hibernate.cfg.xml

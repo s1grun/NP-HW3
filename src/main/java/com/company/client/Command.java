@@ -3,6 +3,8 @@ package com.company.client;
 
 import com.company.client.view.ClientView;
 import com.company.common.FileServer;
+import com.company.common.UserDTO;
+
 
 import java.io.File;
 import java.util.Scanner;
@@ -13,6 +15,7 @@ import java.util.Scanner;
 public class Command implements Runnable{
     private Scanner console = new Scanner(System.in);
     private FileServer server ;
+    private UserDTO user = null;
     public Command(FileServer server){
         this.server = server;
     }
@@ -54,8 +57,6 @@ public class Command implements Runnable{
 
                     case "download":
                         String fname = cmd.split(" ")[1];
-
-
                         if(server.downloadFile(fname)==200){
                             ClientFileHandler handler = new ClientFileHandler();
                             handler.downloadFile();
@@ -70,13 +71,20 @@ public class Command implements Runnable{
                             new ClientView(500);
                         }
                     case "login":
-                        boolean log = server.userLogin("qingtao","123");
-                        if (log){
+                        user = server.userLogin("qingtao","123");
+                        if (user!= null){
                             new ClientView(210);
                         }else {
                             new ClientView(440);
                         }
                         break;
+                    case "fileList":
+                        if(user!=null){
+                            server.getFileList();
+                        }else{
+                            new ClientView(441);
+                        }
+
                     default:
                         System.out.println("Unknown command");
                         break;

@@ -1,11 +1,14 @@
 package com.company.server.integration;
 
-import com.company.common.UserDTO;
+//import com.company.common.UserDTO;
+import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UserDAO {
+public class UserDAO{
     private final EntityManagerFactory fact;
     private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
 
@@ -77,6 +80,20 @@ public class UserDAO {
         try {
             EntityManager entityManager = beginTransaction();
             entityManager.persist(userEntity);
+        } finally {
+            commitTransaction();
+        }
+    }
+
+
+    public List<FilesEntity> getFileList() {
+        try {
+            EntityManager em = beginTransaction();
+            try {
+                return em.createNamedQuery("getAllFiles", FilesEntity.class).getResultList();
+            } catch (NoResultException noSuchAccount) {
+                return new ArrayList<>();
+            }
         } finally {
             commitTransaction();
         }

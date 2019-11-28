@@ -3,6 +3,22 @@ package com.company.server.model;
 import javax.persistence.*;
 import java.util.Objects;
 
+
+
+@NamedQueries(
+        {
+                @NamedQuery(
+                        name = "getAllFiles",
+                        query = "SELECT files FROM FilesEntity files"
+//                        lockMode = LockModeType.OPTIMISTIC
+                )
+        }
+)
+
+
+
+
+
 @Entity
 @Table(name = "files", schema = "files", catalog = "")
 public class FilesEntity {
