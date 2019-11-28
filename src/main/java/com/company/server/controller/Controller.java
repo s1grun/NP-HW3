@@ -54,7 +54,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
 
     @Override
-    public int uploadFile(String name, String owner, int size) throws Exception {
+    public int uploadFile(String name, String owner, long size) throws Exception {
         FileHandler handler = new FileHandler(1);
         ForkJoinPool.commonPool().execute(handler);
 

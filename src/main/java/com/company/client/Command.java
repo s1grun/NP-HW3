@@ -33,15 +33,16 @@ public class Command implements Runnable{
                         break;
                     case "upload":
                         String filename = cmd.split(" ")[1];
+                        File file;
                         try{
-                            File file = new File(filename);
+                            file = new File(filename);
                         }catch (Exception e){
                             System.out.println("file error");
                             System.out.println(e);
                             break;
                         }
 
-                        int status = server.uploadFile(filename, "qingtao", filename.length());
+                        int status = server.uploadFile(filename, "qingtao", file.length());
                         System.out.println(status);
 
                         if (status == 200){

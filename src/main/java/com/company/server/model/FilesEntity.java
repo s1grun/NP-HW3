@@ -23,10 +23,10 @@ import javax.persistence.Id;
 public class FilesEntity {
     private String name;
     private String owner;
-    private int size;
+    private long size;
     private int idFile;
 
-    public FilesEntity(String name, String owner, int size) {
+    public FilesEntity(String name, String owner, long size) {
         this.name = name;
         this.owner = owner;
         this.size = size;
@@ -58,11 +58,11 @@ public class FilesEntity {
 
     @Basic
     @Column(name = "size")
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 

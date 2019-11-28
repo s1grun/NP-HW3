@@ -1,41 +1,61 @@
-//package com.company.server.integration;
-//
-//import javax.persistence.EntityManager;
-//import javax.persistence.EntityManagerFactory;
-//import javax.persistence.EntityTransaction;
-//import javax.persistence.Persistence;
-//import java.io.File;
-//
-//public class fileDAO {
-//    private final EntityManagerFactory fact;
-//    private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
-//
-//    public fileDAO() {
-//        fact = Persistence.createEntityManagerFactory("filesPersistenceUnit");
-//    }
-//
-////    public File findFile (String fileName, boolean endOfTransaction) {
-//////        if (fileName == null) {
-//////            return null;
-//////        }
-//////
-//////        try{
-//////            EntityManager entityManager = beginTransaction();
-//////            try {
-//////                return entityManager.createNamedQuery("findFile", File.class).
-//////                        setParameter("fileName", fileName).getSingleResult();
-//////            }
-//////        }
-////
-////    }
-//
-//    private EntityManager beginTransaction() {
-//        EntityManager entityManager = fact.createEntityManager();
-//        entityManagerThreadLocal.set(entityManager);
-//        EntityTransaction transaction = entityManager.getTransaction();
-//        if (!transaction.isActive()) {
-//            transaction.begin();
-//        }
-//        return entityManager;
-//    }
-//}
+package com.company.server.integration;
+
+import com.company.server.model.FilesEntity;
+import com.company.server.model.UserEntity;
+
+import javax.persistence.*;
+
+public class FileDAO {
+    private final EntityManagerFactory fact;
+    private final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
+
+    public FileDAO() {
+        fact = Persistence.createEntityManagerFactory("filesPersistenceUnit");
+    }
+
+    public void addFile(FilesEntity filesEntity) {
+        System.out.println("add file metadata to db" + filesEntity);
+        try {
+            EntityManager entityManager = beginTransaction();
+            entityManager.persist(filesEntity);
+        } finally {
+            commitTransaction();
+        }
+    }
+
+    public FilesEntity findFile (String fileName, boolean endOfTransaction) {
+        if (fileName == null) {
+            return null;
+        }
+
+        try{
+            EntityManager entityManager = beginTransaction();
+            try {
+                return entityManager.createNamedQuery("findFile", FilesEntity.class).
+                        setParameter("fileName", fileName).getSingleResult();
+            }catch (NoResultException noFileWithThisName) {
+                return null;
+            }
+        }finally {
+            if (endOfTransaction){
+
+            }
+        }
+
+    }
+
+    private EntityManager beginTransaction() {
+        EntityManager entityManager = fact.createEntityManager();
+        entityManagerThreadLocal.set(entityManager);
+        EntityTransaction transaction = entityManager.getTransaction();
+        if (!transaction.isActive()) {
+            transaction.begin();
+        }
+        return entityManager;
+    }
+
+    private void commitTransaction() {
+        entityManagerThreadLocal.get().getTransaction().commit();
+
+    }
+}
