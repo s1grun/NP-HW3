@@ -17,5 +17,5 @@ public interface FileServer extends Remote {
     CommunicateStatus uploadFile(String name, String owner, long size, int permission) throws Exception;
     int downloadFile(String name) throws RemoteException;
     public List<? extends FileDTO> getFileList() throws RemoteException;
-
+    public boolean deleteFile(String name) throws RemoteException;
 }

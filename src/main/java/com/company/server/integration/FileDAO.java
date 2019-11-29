@@ -25,6 +25,15 @@ public class FileDAO {
         }
     }
 
+    public void deleteFile (String fileName) {
+        try {
+            EntityManager entityManager = beginTransaction();
+            entityManager.createNamedQuery("deleteFile", FilesEntity.class).setParameter("name", fileName).executeUpdate();
+        } finally {
+            commitTransaction();
+        }
+    }
+
     public FilesEntity findFile (String fileName, boolean endOfTransaction) {
         FilesEntity find;
         if (fileName == null) {

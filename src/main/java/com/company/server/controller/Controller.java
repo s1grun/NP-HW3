@@ -1,6 +1,5 @@
 package com.company.server.controller;
 
-import com.company.client.ClientController;
 import com.company.common.*;
 //import com.company.server.integration.fileDAO;
 import com.company.server.FileHandler;
@@ -11,6 +10,7 @@ import com.company.server.model.UserEntity;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import javax.security.auth.login.AccountException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     public boolean register(String userName, String pw) throws Exception {
         try {
             if (userDAO.findUser(userName, true) != null) {
-                throw new Exception("User: " + userName + " already exists");
+                return false;
             }
             userDAO.registerUser( new UserEntity(userName, pw));
             return true;
@@ -151,4 +151,15 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
     }
 
+    @Override
+    public boolean deleteFile(String name) throws RemoteException {
+        try {
+            if (filesDAO.findFile(name, true) == null)
+                throw new RemoteException("File with this name does not exist");
+            filesDAO.deleteFile(name);
+            return true;
+        } catch (RemoteException re) {
+            throw new RemoteException("Cloud not delete file", re);
+        }
+    }
 }

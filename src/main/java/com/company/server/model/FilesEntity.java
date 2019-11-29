@@ -25,13 +25,17 @@ import javax.persistence.Id;
 @NamedQueries(
         {       @NamedQuery(
                     name = "findFile",
-                    query = "SELECT fm FROM FilesEntity fm WHERE fm.name LIKE :fileName"
+                    query = "SELECT fn FROM FilesEntity fn WHERE fn.name LIKE :fileName"
     //                lockMode = LockModeType.OPTIMISTIC
                 ),
                 @NamedQuery(
                         name = "getAllFiles",
                         query = "SELECT allfiles FROM FilesEntity allfiles"
 //                        lockMode = LockModeType.OPTIMISTIC
+                ),
+                @NamedQuery(
+                        name = "deleteFile",
+                        query = "DELETE FROM FilesEntity fn WHERE fn.name LIKE :name"
                 )
         }
 )
@@ -41,7 +45,7 @@ import javax.persistence.Id;
 
 
 @Entity
-@Table(name = "files", schema = "filesys")
+@Table(name = "files", schema = "files")
 public class FilesEntity implements FileDTO{
     private String name;
     private String owner;
