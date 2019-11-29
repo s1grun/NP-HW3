@@ -30,7 +30,7 @@ public class Command implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("client start reading command");
+        System.out.println("Please register or login with username and password. Example: register/login john 1234");
         while (true){
             try {
 
@@ -94,7 +94,9 @@ public class Command implements Runnable{
 
                         break;
                     case "register":
-                        boolean res = server.register("qingtao","123");
+                        String username = cmd.split(" ")[1];
+                        String password = cmd.split(" ")[2];
+                        boolean res = server.register(username, password);
                         if(res){
                             new ClientView(110);
                         }else {
@@ -102,7 +104,9 @@ public class Command implements Runnable{
                         }
                         break;
                     case "login":
-                        user = server.userLogin("qingtao","123");
+                        String usern = cmd.split(" ")[1];
+                        String passw = cmd.split(" ")[2];
+                        user = server.userLogin(usern, passw);
                         if (user!= null){
                             new ClientView(210);
                         }else {
@@ -117,6 +121,15 @@ public class Command implements Runnable{
                             }
                         }else{
                             new ClientView(441);
+                        }
+                        break;
+                    case "deleteFile":
+                        String fname = cmd.split(" ")[1];
+                        if (user != null){
+                            if(server.deleteFile(fname)){
+                                new ClientView(250);
+                            }
+
                         }
                         break;
                     default:

@@ -27,7 +27,7 @@ import javax.persistence.LockModeType;
 )
 
 @Entity
-@Table(name = "user", schema = "filesys")
+@Table(name = "user", schema = "files")
 public class UserEntity implements UserDTO {
     private String username;
     private String password;

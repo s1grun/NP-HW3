@@ -7,6 +7,7 @@ import com.company.server.integration.*;
 import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
+import javax.security.auth.login.AccountException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     public boolean register(String userName, String pw) throws Exception {
         try {
             if (userDAO.findUser(userName, true) != null) {
-                throw new Exception("User: " + userName + " already exists");
+                return false;
             }
             userDAO.registerUser( new UserEntity(userName, pw));
             return true;
@@ -133,5 +134,17 @@ public class Controller extends UnicastRemoteObject implements FileServer {
         }
         return new ArrayList<>();
 
+    }
+
+    @Override
+    public boolean deleteFile(String name) throws RemoteException {
+        try {
+            if (filesDAO.findFile(name, true) == null)
+                throw new RemoteException("File with this name does not exist");
+            filesDAO.deleteFile(name);
+            return true;
+        } catch (RemoteException re) {
+            throw new RemoteException("Cloud not delete file", re);
+        }
     }
 }
