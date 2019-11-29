@@ -1,7 +1,8 @@
-package com.company.client;
+package com.company.client.view;
 
 
-import com.company.client.view.ClientView;
+import com.company.client.startup.Client;
+import com.company.client.controller.ClientFileHandler;
 import com.company.common.CommunicateStatus;
 import com.company.common.FileDTO;
 import com.company.common.FileServer;
@@ -9,8 +10,6 @@ import com.company.common.UserDTO;
 
 
 import java.io.File;
-import java.rmi.ServerError;
-import java.rmi.ServerException;
 import java.util.List;
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package com.company.client;
+package com.company.client.controller;
 
 import com.company.common.ClientNotification;
 import com.company.common.CommunicateStatus;
@@ -10,7 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
  * Created by weng on 2019/11/29.
  */
 public class ClientController extends UnicastRemoteObject implements ClientNotification {
-    protected ClientController() throws RemoteException {
+    public ClientController() throws RemoteException {
     }
 
     @Override

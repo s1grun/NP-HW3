@@ -1,4 +1,4 @@
-package com.company.server;
+package com.company.server.controller;
 
 import java.io.*;
 import java.net.ServerSocket;

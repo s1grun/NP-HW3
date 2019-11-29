@@ -1,8 +1,7 @@
-package com.company.client;
-import com.company.common.ClientNotification;
-import com.company.common.CommunicateStatus;
+package com.company.client.startup;
+import com.company.client.controller.ClientController;
+import com.company.client.view.Command;
 import com.company.common.FileServer;
-import com.company.server.controller.Controller;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -10,7 +9,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by weng on 2019/11/25.
