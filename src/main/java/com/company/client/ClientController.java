@@ -15,7 +15,7 @@ public class ClientController extends UnicastRemoteObject implements ClientNotif
 
     @Override
     public void sendNotification(String msg) throws RemoteException {
-        System.out.println(msg);
+        System.out.println("NOTIFICATION: "+msg);
 //        switch (msg){
 //            case :
 //                System.out.println("");

@@ -14,6 +14,8 @@ import java.rmi.ServerException;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.company.common.CommunicateStatus.*;
+
 /**
  * Created by weng on 2019/11/25.
  */
@@ -42,14 +44,15 @@ public class Command implements Runnable{
                 switch (cmd_type) {
                     case "logout":
                         user = null;
-                        new ClientView(0);
+                        new ClientView(CommunicateStatus.LOG_OUT);
+
                         break;
                     case "upload":
                         if(user!=null){
                             String filename = cmd.split(" ")[1];
                             int permission = WRITE;
                             try{
-                                permission=Integer.getInteger(cmd.split(" ")[2]) ;
+                                permission=Integer.parseInt(cmd.split(" ")[2]) ;
                             }catch (Exception e){
                                 System.out.println("permission default WRITE");
                             }
@@ -58,17 +61,20 @@ public class Command implements Runnable{
 
                             file = new File(filename);
                             if(!file.exists()){
-                                System.out.println("file error");
+                                new ClientView(NO_SUCH_FILE);
                                 break;
                             }
 
                             try{
                                 CommunicateStatus status = server.uploadFile(filename, user.getUsername(), file.length(),permission);
-                                System.out.println(status);
+
                                 if (status == CommunicateStatus.CONNECTION_BUILD){
                                     ClientFileHandler handler = new ClientFileHandler();
                                     handler.uploadSocket(filename);
-                                    new ClientView(200);
+                                    new ClientView(FILE_TRANSFER_SUCCEED);
+                                }else if(status == CommunicateStatus.NO_PERMISSION ){
+                                    new ClientView(status);
+//                                    throw new Exception("File with this name: " + filename + " already exists, no permission to update");
                                 }
                             }catch (Exception e){
                                 System.out.println(e);
@@ -76,7 +82,7 @@ public class Command implements Runnable{
 
 
                         }else {
-                            new ClientView(441);
+                            new ClientView(CommunicateStatus.LOG_IN_NEEDED);
                         }
 
 
@@ -85,13 +91,16 @@ public class Command implements Runnable{
                     case "download":
                         if(user!=null){
                             String fname = cmd.split(" ")[1];
-                            if(server.downloadFile(fname)==200){
+                            CommunicateStatus cs= server.downloadFile(user.getUsername(),fname);
+                            if(cs==CommunicateStatus.CONNECTION_BUILD){
                                 ClientFileHandler handler = new ClientFileHandler();
                                 handler.downloadFile();
-                                System.out.println("download successfully");
+                                new ClientView(FILE_TRANSFER_SUCCEED);
+                            }else{
+                                new ClientView(NO_SUCH_FILE);
                             }
                         }else{
-                            new ClientView(441);
+                            new ClientView(CommunicateStatus.LOG_IN_NEEDED);
                         }
 
                         break;
@@ -100,19 +109,20 @@ public class Command implements Runnable{
                         String password = cmd.split(" ")[2];
                         boolean res = server.register(username, password);
                         if(res){
-                            new ClientView(110);
+                            new ClientView(REGISTER_SUCCEED);
                         }else {
-                            new ClientView(500);
+                            new ClientView(REGISTER_FAILED);
                         }
                         break;
                     case "login":
                         String usern = cmd.split(" ")[1];
                         String passw = cmd.split(" ")[2];
+                        client.startReceivingNotification(usern);
                         user = server.userLogin(usern, passw);
                         if (user!= null){
-                            new ClientView(210);
+                            new ClientView(LOGIN_SUCCEED);
                         }else {
-                            new ClientView(440);
+                            new ClientView(LOGIN_FAILED);
                         }
                         break;
                     case "fileList":
@@ -122,14 +132,16 @@ public class Command implements Runnable{
                                 System.out.println(files.getName()+" upload by: "+ files.getOwner());
                             }
                         }else{
-                            new ClientView(441);
+                            new ClientView(CommunicateStatus.LOG_IN_NEEDED);
                         }
                         break;
                     case "deleteFile":
                         String fname = cmd.split(" ")[1];
                         if (user != null){
-                            if(server.deleteFile(fname)){
-                                new ClientView(250);
+                            if(server.deleteFile(user.getUsername(), fname)){
+                                new ClientView(DELETE_SUCCESSFULLY);
+                            }else{
+                                new ClientView(DELETE_FAILED);
                             }
 
                         }

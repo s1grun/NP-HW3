@@ -45,7 +45,7 @@ import javax.persistence.Id;
 
 
 @Entity
-@Table(name = "files", schema = "files")
+@Table(name = "files", schema = "filesys")
 public class FilesEntity implements FileDTO{
     private String name;
     private String owner;

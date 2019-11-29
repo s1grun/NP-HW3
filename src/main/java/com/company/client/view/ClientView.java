@@ -1,36 +1,47 @@
 package com.company.client.view;
 
+import com.company.common.CommunicateStatus;
+
 public class ClientView {
 
-    public ClientView(int status) {
+    public ClientView(CommunicateStatus status) {
         switch (status){
-            case 210:
+            case LOGIN_SUCCEED:
                 System.out.println("Login was successful!");
                 System.out.println("To see a list of all files do: fileList");
                 System.out.println("To upload a file do: upload filename");
                 System.out.println("To download a file do: download filename");
                 System.out.println("To delete a file do: deleteFile filename");
                 break;
-            case 110:
+            case REGISTER_SUCCEED:
                 System.out.println("Registration was successful!");
                 break;
-            case 500:
+            case REGISTER_FAILED:
                 System.out.println("Registration failed. Please use a unique username");
                 break;
-            case 0:
+            case LOG_OUT:
                 System.out.println("Disconnected");
                 break;
-            case 200:
-                System.out.println("Uploading file was successful!");
+            case FILE_TRANSFER_SUCCEED:
+                System.out.println("file transfer was successful!");
                 break;
-            case 440:
+            case LOGIN_FAILED:
                 System.out.println("Login failed");
                 break;
-            case 441:
+            case LOG_IN_NEEDED:
                 System.out.println("Please login");
                 break;
-            case 250:
+            case DELETE_SUCCESSFULLY:
                 System.out.println("File was deleted successfully!");
+                break;
+            case NO_SUCH_FILE:
+                System.out.println("No such file");
+                break;
+            case NO_PERMISSION:
+                System.out.println("NO PERMISSION");
+                break;
+            case DELETE_FAILED:
+                System.out.println("DELETE FAILED");
                 break;
 
         }

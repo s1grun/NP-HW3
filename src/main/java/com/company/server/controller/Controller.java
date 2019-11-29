@@ -10,11 +10,12 @@ import com.company.server.model.UserEntity;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
-import javax.security.auth.login.AccountException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -23,7 +24,7 @@ import java.util.concurrent.ForkJoinPool;
 public class Controller extends UnicastRemoteObject implements FileServer {
     private final FileDAO filesDAO;
     private final UserDAO userDAO;
-    private List<ClientNotification> notificationList = new ArrayList<>();
+    private Map<String ,ClientNotification> notificationList = new HashMap<>();
 
     public Controller() throws RemoteException {
         super();
@@ -33,8 +34,8 @@ public class Controller extends UnicastRemoteObject implements FileServer {
 
     public void addNotification(String servicename) throws RemoteException, NotBoundException, MalformedURLException {
         ClientNotification noti_service = (ClientNotification) Naming.lookup("notification"+servicename);
-        System.out.println("aaaaaaaaaaaa");
-        notificationList.add(noti_service);
+//        System.out.println("aaaaaaaaaaaa");
+        notificationList.put(servicename,noti_service);
     }
 
 
@@ -44,13 +45,23 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     public UserDTO userLogin(String userName, String pw) throws Exception {
         System.out.println(userName+pw);
         try {
-            if (userDAO.findUser(userName, true) != null) {
-                UserDTO new_user = (UserDTO) userDAO.checkPassword(pw, true);
-                if( new_user!= null) {
-//                    addNotification(new_user.toString());
-//                    notificationList.get(0).sendNotification("test notification");
-                    return new_user;
+            UserEntity finduser = userDAO.findUser(userName, true);
+            if ( finduser!= null) {
+                if(finduser.equals(new UserEntity(userName,pw))){
+                    try{
+                        addNotification(userName);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+                    return finduser;
                 }
+
+//                UserDTO new_user = (UserDTO) userDAO.checkPassword(pw, true);
+//                if( new_user!= null) {
+//
+//                }
             }
         }catch (Exception e) {
             throw new Exception("login failed " + e);
@@ -86,7 +97,7 @@ public class Controller extends UnicastRemoteObject implements FileServer {
             FilesEntity the_file = filesDAO.findFile(name, false);
             if (the_file != null) {
 //                System.out.println(the_file);
-                if(the_file.getOwner() == owner){
+                if(the_file.getOwner().equals(owner) ){
 //                    filesDAO.addFile(new FilesEntity(name, owner, size,permission));
                     the_file.setOwner(owner);
                     the_file.setPermission(permission);
@@ -102,13 +113,14 @@ public class Controller extends UnicastRemoteObject implements FileServer {
                         }catch (Exception e){
                             System.out.println("close server "+e);
                         }
-
-                        throw new Exception("File with this name: " + name + " already exists, no permission to update");
+                        return CommunicateStatus.NO_PERMISSION;
                     }
+                    sendNotification(the_file.getOwner(),owner+" update file");
                     the_file.setOwner(owner);
                     the_file.setPermission(permission);
                     the_file.setSize(size);
                     filesDAO.updateFile();
+
 //                    filesDAO.addFile(new FilesEntity(name, owner, size,permission));
                     return CommunicateStatus.CONNECTION_BUILD;
                 }
@@ -134,10 +146,26 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public int downloadFile(String name) throws RemoteException {
-        FileHandler handler = new FileHandler(2, name);
-        ForkJoinPool.commonPool().execute(handler);
-        return 200;
+    public CommunicateStatus downloadFile(String user,String name) throws RemoteException {
+        try {
+            FilesEntity the_file = filesDAO.findFile(name, true);
+
+            if(the_file!=null){
+                sendNotification(the_file.getOwner(),user+" download file");
+                FileHandler handler = new FileHandler(2, name);
+                ForkJoinPool.commonPool().execute(handler);
+                return CommunicateStatus.CONNECTION_BUILD;
+            }else{
+                System.out.println(the_file);
+                return CommunicateStatus.NO_SUCH_FILE;
+            }
+
+        }catch (Exception e){
+            System.out.println("Server: find file error "+e);
+            return CommunicateStatus.NO_SUCH_FILE;
+        }
+
+
     }
 
     @Override
@@ -152,14 +180,31 @@ public class Controller extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public boolean deleteFile(String name) throws RemoteException {
+    public boolean deleteFile(String user,String name) throws RemoteException {
         try {
-            if (filesDAO.findFile(name, true) == null)
+            FilesEntity the_file = filesDAO.findFile(name, true);
+            if (the_file == null){
                 throw new RemoteException("File with this name does not exist");
-            filesDAO.deleteFile(name);
-            return true;
+
+            }
+            if( the_file.getOwner().equals(user)){
+                filesDAO.deleteFile(name);
+                return true;
+            }else{
+                return false;
+            }
+
+
         } catch (RemoteException re) {
             throw new RemoteException("Cloud not delete file", re);
+        }
+    }
+
+
+
+    public void sendNotification(String name,String msg) throws RemoteException {
+        if(notificationList.get(name)!=null){
+            notificationList.get(name).sendNotification(msg);
         }
     }
 }

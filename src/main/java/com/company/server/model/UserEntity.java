@@ -27,7 +27,7 @@ import javax.persistence.LockModeType;
 )
 
 @Entity
-@Table(name = "user", schema = "files")
+@Table(name = "user", schema = "filesys")
 public class UserEntity implements UserDTO {
     private String username;
     private String password;
@@ -78,8 +78,7 @@ public class UserEntity implements UserDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return uid == that.uid &&
-                Objects.equals(username, that.username) &&
+        return Objects.equals(username, that.username) &&
                 Objects.equals(password, that.password);
     }
 
