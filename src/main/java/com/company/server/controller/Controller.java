@@ -1,5 +1,6 @@
 package com.company.server.controller;
 
+import com.company.client.ClientController;
 import com.company.common.*;
 //import com.company.server.integration.fileDAO;
 import com.company.server.FileHandler;
@@ -7,6 +8,9 @@ import com.company.server.integration.*;
 import com.company.server.model.FilesEntity;
 import com.company.server.model.UserEntity;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -19,12 +23,22 @@ import java.util.concurrent.ForkJoinPool;
 public class Controller extends UnicastRemoteObject implements FileServer {
     private final FileDAO filesDAO;
     private final UserDAO userDAO;
+    private List<ClientNotification> notificationList = new ArrayList<>();
 
     public Controller() throws RemoteException {
         super();
         filesDAO = new FileDAO();
         userDAO = new UserDAO();
     }
+
+    public void addNotification(String servicename) throws RemoteException, NotBoundException, MalformedURLException {
+        ClientNotification noti_service = (ClientNotification) Naming.lookup("notification"+servicename);
+        System.out.println("aaaaaaaaaaaa");
+        notificationList.add(noti_service);
+    }
+
+
+
 
     @Override
     public UserDTO userLogin(String userName, String pw) throws Exception {
@@ -33,11 +47,13 @@ public class Controller extends UnicastRemoteObject implements FileServer {
             if (userDAO.findUser(userName, true) != null) {
                 UserDTO new_user = (UserDTO) userDAO.checkPassword(pw, true);
                 if( new_user!= null) {
+//                    addNotification(new_user.toString());
+//                    notificationList.get(0).sendNotification("test notification");
                     return new_user;
                 }
             }
         }catch (Exception e) {
-            throw new Exception("login failed" + e);
+            throw new Exception("login failed " + e);
         }
         return null;
     }
@@ -134,4 +150,5 @@ public class Controller extends UnicastRemoteObject implements FileServer {
         return new ArrayList<>();
 
     }
+
 }

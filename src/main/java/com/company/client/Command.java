@@ -23,8 +23,10 @@ public class Command implements Runnable{
     private UserDTO user = null;
     final int READ_ONLY=1;
     final int WRITE=0;
-    public Command(FileServer server){
+    private Client client;
+    public Command(FileServer server,Client client){
         this.server = server;
+        this.client = client;
     }
 
 

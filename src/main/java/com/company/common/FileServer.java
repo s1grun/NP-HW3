@@ -1,5 +1,8 @@
 package com.company.common;
 
+import com.company.client.Client;
+import com.company.client.ClientController;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
